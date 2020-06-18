@@ -1,10 +1,16 @@
 console.log("script.js running")
 
+const slider = document.getElementById('slider');
+
 const containerWidth = 800;
 const containerHeight = 400;
 
 const blockLevels = [5, 10, 15, 25, 50, 80, 120];
 const sleepTimes = [400, 300, 200, 100, 50, 25]
+
+document.onload = generateBlocks();
+
+slider.addEventListener("change", generateBlocks);
 
 function generateBlocks() {
   container = document.getElementById("container");
@@ -12,7 +18,6 @@ function generateBlocks() {
   //Empty container so it's random each time
   container.innerHTML = "";
 
-  slider = document.getElementById("slider");
   const numBlocks = blockLevels[slider.value - 1];
   const blockWidth = (containerWidth / numBlocks) - 2;
 
@@ -34,7 +39,6 @@ function sleep(ms) {
 }
 
 async function runBubbleSort() {
-  const slider = document.getElementById('slider');
   //Get the blocks
   const blocks = document.querySelectorAll('.block');
 
@@ -84,8 +88,6 @@ async function runQuickSort() {
 }
 
 async function runIteration(blocks, start, end) {
-
-  const slider = document.getElementById('slider');
 
   //If length is less than 2 there is less than 3 in array
   const length = end - start;
@@ -219,5 +221,84 @@ async function runInsertionSort() {
 
 }
 
+function mergeSort(blockList, start, end) {
+  newList = blockList.slice(start, end);
+  newList.sort((a, b) => a - b);
+  return newList;
+}
 
+async function runMergeSort() {
+
+  const blocks = document.querySelectorAll('.block');
+
+  let sortedBlocks = [];
+  for (let i = 0; i < blocks.length; i++) {
+    sortedBlocks.push(parseInt(blocks[i].style.height.replace('px', '')));
+  }
+  sortedBlocks.sort((a, b) => a - b);
+
+  blockList = [];
+
+  for (let i = 0; i < blocks.length; i++) {
+    blockList.push(parseInt(blocks[i].style.height.replace('px', '')));;
+  }
+
+  factor = 2;
+  while (factor < blocks.length) {
+    //Split list
+    for (let i = 0; i < (blockList.length-1); i+=factor) {
+      //Sort list
+      sortedList = mergeSort(blockList, i, i + factor);
+      for (let y = 0; y < sortedList.length; y++) {
+        blocks[i+y].style.height = sortedList[y] + 'px';
+        if (sortedList[y] == sortedBlocks[i+y]) {
+          blocks[i+y].classList.add('correct');
+        }
+        await sleep(10);
+      }
+    }
+    factor *= 2;
+  }
+  sortedList = mergeSort(blockList, 0, blockList.length);
+  for (let y = 0; y < sortedList.length; y++) {
+    blocks[y].style.height = sortedList[y] + 'px';
+    if (sortedList[y] == sortedBlocks[y]) {
+      blocks[y].classList.add('correct');
+    }
+    await sleep(10);
+  }
+}
+
+async function runSelectionSort() {
+
+  const blocks = document.querySelectorAll('.block');
+
+  let currentMinIndex = 0;
+  let currentMin = 0;
+  let currentIndex = 0;
+
+  while (currentIndex != (blocks.length - 1)) {
+    for (let i = currentIndex; i < blocks.length; i++) {
+      value = parseInt(blocks[i].style.height.replace('px', ''));
+      if (i == 0) currentMin = value;
+
+      if (value < currentMin) {
+        currentMin = value;
+        currentMinIndex = i;
+      }
+    }
+    if (currentMinIndex != currentIndex) {
+      //Swap the two
+      const ph = blocks[currentMinIndex].style.height;
+      blocks[currentMinIndex].style.height = blocks[currentIndex].style.height;
+      blocks[currentIndex].style.height = ph;
+    }
+    blocks[currentIndex].classList.add('correct');
+    currentIndex++;
+    currentMin = parseInt(blocks[currentIndex].style.height.replace('px', ''));
+    await sleep(70);
+    currentMinIndex = currentIndex;
+  }
+  blocks[blocks.length - 1].classList.add('correct');
+}
 
