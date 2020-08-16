@@ -113,13 +113,15 @@ async function runQuicksortIteration(start, end) {
 
   console.log("Quicksort iteration", start, end);
 
-  await sleep(1000);
+  await sleep(50);
 
   //Base case, swap then done
-  if ((start - end) == 1) {
-    if (valueList[start] > valueList[end]) swapArrayValues(start, end);
+  if ((end - start <= 1)) {
+    if (valueList[end] < valueList[start]) {
+      swapArrayValues(end, start);
+    }
+    return;
   }
-  if (start == end) return;
 
   //Otherwise need to get a valueList[pivotIndex] and partition
   let pivotIndex = getPivotIndex(start, end);
@@ -132,7 +134,7 @@ async function runQuicksortIteration(start, end) {
   //Swap items so that lower than valueList[pivotIndex] is on left, higher on right
   while (true) {
     
-    await sleep(1000);
+    await sleep(50);
     let fromLeft = null;
     let fromRight = null;
     let leftIndex = null;
@@ -153,14 +155,52 @@ async function runQuicksortIteration(start, end) {
     if (leftIndex > rightIndex) {
       swapArrayValues(leftIndex, end);
       renderValueList();
-      //runQuicksortIteration(start, leftIndex - 1);
-      runQuicksortIteration(leftIndex, end);
+      if (start < (leftIndex - 1)) {
+        runQuicksortIteration(start, leftIndex - 1);
+      }
+      if ((leftIndex + 1) < end) {
+        runQuicksortIteration(leftIndex + 1, end);
+      }
       return;
     } else {
       swapArrayValues(leftIndex, rightIndex);
       renderValueList();
     }
     renderValueList();
+  }
+}
+
+
+
+
+function mergeSort(start, end) {
+  newList = valueList.slice(start, end);
+  newList.sort((a, b) => a - b);
+  return newList;
+}
+
+async function runMergeSort() {
+
+  let factor = 2;
+  while (factor < valueList.length) {
+    //Split list
+    for (let i = 0; i < (valueList.length-1); i+=factor) {
+      //Sort list
+      sortedList = mergeSort(i, i + factor);
+      for (let y = 0; y < sortedList.length; y++) {
+        valueList[i+y] = sortedList[y];
+        renderValueList();
+        await sleep(50);
+      }
+    }
+    factor *= 2;
+  }
+
+  sortedList = mergeSort(0, valueList[valueList.length - 1]);
+  for (let y = 0; y < sortedList.length; y++) {
+    valueList[y] = sortedList[y];
+    renderValueList();
+    await sleep(50);
   }
 }
 
