@@ -1,139 +1,138 @@
-console.log("script.js running")
 
-const slider = document.getElementById('slider');
 
-const containerWidth = 800;
-const containerHeight = 400;
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const numBars = document.getElementById('numBars');
 
-const blockLevels = [5, 10, 15, 25, 50, 80, 120];
-const sleepTimes = [400, 300, 200, 100, 50, 25]
-
-document.onload = generateBlocks();
-
-slider.addEventListener("change", generateBlocks);
-
-function generateBlocks() {
-  container = document.getElementById("container");
-
-  //Empty container so it's random each time
-  container.innerHTML = "";
-
-  const numBlocks = blockLevels[slider.value - 1];
-  const blockWidth = (containerWidth / numBlocks) - 2;
-
-  for (let i = 0; i < numBlocks; i++) {
-    container.innerHTML += '<div class="block"></div>';
-  }
-
-  //Set the css of the blocks
-  const blocks = document.querySelectorAll('.block');
-  for (let i = 0; i < blocks.length; i++) {
-    blocks[i].style.width = blockWidth + 'px';
-    blocks[i].style.height = Math.ceil(Math.random() * containerHeight) + 'px';
-  }
-}
+let valueList = null;
+let correct = null;
 
 //To aid with the visualization
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-async function runBubbleSort() {
-  //Get the blocks
-  const blocks = document.querySelectorAll('.block');
+numBars.onchange = (e) => {
+  refreshBars();
+}
 
-  let sortedBlocks = [];
-  for (let i = 0; i < blocks.length; i++) {
-    sortedBlocks.push(parseInt(blocks[i].style.height.replace('px', '')));
+function refreshBars() {
+  valueList = generateList(numBars.value * 10);
+  const copy = [...valueList];
+  correct = copy.sort((a, b) => a - b);
+  renderValueList();
+}
+
+function generateList(amount) {
+  let numbers = [];
+
+  for (let i = 0; i < amount; i++) {
+    const number = Math.floor(Math.random() * canvas.height)
+    numbers.push(number);
   }
-  sortedBlocks.sort((a, b) => a - b);
 
-  let finished = false;
-  while (!finished) {
-    let outOfOrder = false;
-    for (let i = 0; i < blocks.length; i++) {
-      if (i == blocks.length - 1) break;
+  return numbers;
+}
 
-      block1 = parseInt(blocks[i].style.height.replace('px', ''));
-      block2 = parseInt(blocks[i+1].style.height.replace('px', ''));
+function listFinished() {
+  for (let i = 0; i < valueList.length; i++) {
+    if (valueList[i] != correct[i]) return false;
+  }
+  return true;
+}
 
-      if (block1 > block2) {
-        outOfOrder = true;
-        const hold = blocks[i].style.height;
-        blocks[i].classList.remove("correct");
-        blocks[i+1].classList.remove("correct");
-        blocks[i].style.height = blocks[i+1].style.height;
-        blocks[i+1].style.height = hold;
-      }
-      await sleep(sleepTimes[slider.value - 1]);
-    }
-    for (let i = 0; i < blocks.length; i++) {
-      block = parseInt(blocks[i].style.height.replace('px', ''));
-      if (block == sortedBlocks[i]) {
-        blocks[i].classList.add("correct");
-      } else {
-        blocks[i].classList.remove("correct");
-      }
-    }
-    if (!outOfOrder) {
-      finished = true;
+function swapArrayValues(a, b) {
+  const ph = valueList[a];
+  valueList[a] = valueList[b];
+  valueList[b] = ph;
+}
+
+function renderValueList() {
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  const barWidth = (canvas.width - 2) / valueList.length - 2;
+
+
+  for (let i = 0; i < valueList.length; i++) {
+    if (valueList[i] === correct[i]) {
+      renderBar('green', i, barWidth, valueList[i]);
+    } else {
+      renderBar('red', i, barWidth, valueList[i]);
     }
   }
 
 }
 
-async function runQuickSort() {
-  const blocks = document.querySelectorAll('.block');
-  runIteration(blocks, 0, blocks.length);
+function renderBar(colour, row, width, height) {
+  ctx.fillStyle = colour;
+  ctx.fillRect(row * (width + 2) + 2, canvas.height - height, width, canvas.height);
 }
 
-async function runIteration(blocks, start, end) {
+function shuffleList(list) {
+  
+  let shuffledList = [...list];
 
-  //If length is less than 2 there is less than 3 in array
+  for (let i = 0; i < 10; i++) {
+    const index1 = Math.floor(Math.random() * shuffledList.length);
+    const index2 = Math.floor(Math.random() * shuffledList.length);
+    const ph = shuffledList[index1];
+    shuffledList[index1] = shuffledList[index2];
+    shuffledList[index2] = ph;
+  }
+  return shuffledList;
+
+}
+
+function getPivotIndex(start, end) {
+
   const length = end - start;
 
-  if (length < 3) {
-    if (length == 2) {
-      const a = parseInt(blocks[start].style.height.replace('px', ''));
-      const b = parseInt(blocks[start + 1].style.height.replace('px', ''));
-      if (a > b) {
-        //Need to swap them
-        const ph = blocks[start].style.height;
-        blocks[start].style.height = blocks[start + 1].style.height;
-        blocks[start + 1].style.height = ph;
-      }
-      blocks[start + 1].classList.add("correct");
-    }
-    blocks[start].classList.add("correct");
-    return;
-  }
-
-
-  a = parseInt(blocks[start].style.height.replace('px', ''));
-  b = parseInt(blocks[end-1].style.height.replace('px', ''));
-  c = parseInt(blocks[Math.floor( length / 2)].style.height.replace('px', ''));
-  
-  const pivot = Math.max(Math.min(a,b), Math.min(Math.max(a,b),c));
+  let numbers = [valueList[start], valueList[Math.floor(length/2)], valueList[end]];
+  let copy = [...numbers];
+  let pivot = copy.sort((a,b) => a-b)[1];
   let pivotIndex = null;
-
-  //First, swap pivot to the right
-  if (pivot == a) {
+  if (pivot == numbers[0]) {
     pivotIndex = start;
-    const ph = blocks[pivotIndex].style.height;
-    blocks[pivotIndex].style.height = blocks[end-1].style.height;
-    blocks[end-1].style.height = ph;
-  } else if (pivot == b) {
-    pivotIndex = end - 1;
+  } else if (pivot == numbers[1]) {
+    pivotIndex = Math.floor(length/2);
   } else {
-    pivotIndex = Math.floor(length / 2);
-    const ph = blocks[pivotIndex].style.height;
-    blocks[pivotIndex].style.height = blocks[end-1].style.height;
-    blocks[end-1].style.height = ph;
+    pivotIndex = end;
   }
 
-  await sleep(100);
+  return pivotIndex;
+}
 
+async function runQuicksort() {
+  console.log("Running quicksort");
+  await runQuicksortIteration(0, valueList.length - 1);
+  console.log("Done");
+}
+
+async function runQuicksortIteration(start, end) {
+
+  console.log("Quicksort iteration", start, end);
+
+  await sleep(1000);
+
+  //Base case, swap then done
+  if ((start - end) == 1) {
+    if (valueList[start] > valueList[end]) swapArrayValues(start, end);
+  }
+  if (start == end) return;
+
+  //Otherwise need to get a valueList[pivotIndex] and partition
+  let pivotIndex = getPivotIndex(start, end);
+  console.log(pivotIndex);
+  //Move valueList[pivotIndex] to the back
+  swapArrayValues(pivotIndex, end);
+  renderValueList();
+  pivotIndex = end;
+
+  //Swap items so that lower than valueList[pivotIndex] is on left, higher on right
   while (true) {
+    
+    await sleep(1000);
     let fromLeft = null;
     let fromRight = null;
     let leftIndex = null;
@@ -141,164 +140,89 @@ async function runIteration(blocks, start, end) {
 
     //Find item from left and item from right
     for (let i = start; i < end; i++) {
-      const blockHeight = parseInt(blocks[i].style.height.replace('px', ''));
-      if (blockHeight >= pivot && fromLeft == null) {
-        fromLeft = blocks[i];
+      if (valueList[i] >= valueList[pivotIndex] && fromLeft == null) {
+        fromLeft = valueList[i];
         leftIndex = i;
       }
-      if (blockHeight < pivot) {
-        fromRight = blocks[i];
+      if (valueList[i] < valueList[pivotIndex]) {
+        fromRight = valueList[i];
         rightIndex = i;
       }
     }
 
     if (leftIndex > rightIndex) {
-      const ph = blocks[leftIndex].style.height;
-      blocks[leftIndex].style.height = blocks[end-1].style.height;
-      blocks[end-1].style.height = ph;
-      blocks[leftIndex].classList.add("correct");
-      runIteration(blocks, start, leftIndex);
-      runIteration(blocks, leftIndex + 1, end);
+      swapArrayValues(leftIndex, end);
+      renderValueList();
+      //runQuicksortIteration(start, leftIndex - 1);
+      runQuicksortIteration(leftIndex, end);
       return;
     } else {
-      const ph = blocks[leftIndex].style.height;
-      blocks[leftIndex].style.height = blocks[rightIndex].style.height;
-      blocks[rightIndex].style.height = ph;
+      swapArrayValues(leftIndex, rightIndex);
+      renderValueList();
     }
-    await sleep(100);
+    renderValueList();
   }
 }
 
-async function shuffleBack(blocks, curIndex, toInsert, sortedBlocks) {
-  const ph = blocks[curIndex].style.height;
-  for (let i = curIndex; i > toInsert; i--) {
-    blocks[i].style.height = blocks[i-1].style.height; 
-    if (parseInt(blocks[i].style.height.replace('px', '')) == sortedBlocks[i]) {
-      blocks[i].classList.add("correct");
-    }
-  }
-  blocks[toInsert].style.height = ph;
-  if (parseInt(blocks[toInsert].style.height.replace('px', '')) == sortedBlocks[toInsert]) {
-    blocks[toInsert].classList.add("correct");
-  }
-}
-
-async function runInsertionSort() {
-  const blocks = document.querySelectorAll('.block');
-
-  let sortedBlocks = [];
-  for (let i = 0; i < blocks.length; i++) {
-    sortedBlocks.push(parseInt(blocks[i].style.height.replace('px', '')));
-  }
-  sortedBlocks.sort((a, b) => a - b);
-
-  const index = 0;
-  for (let i = index; i < blocks.length; i++) {
-    if (i == 0) continue;
-
-    const a = parseInt(blocks[i].style.height.replace('px', ''));
-    const b = parseInt(blocks[i-1].style.height.replace('px', ''));
-    if (a < b) {
-      let y = i - 1;
-      while (y >= 0) {
-        if (y == 0) {
-          shuffleBack(blocks, i, 0, sortedBlocks);
-          y = -1;
-          continue;
-        }
-        const c = parseInt(blocks[y-1].style.height.replace('px', ''));
-        if (a > c) {
-          shuffleBack(blocks, i, y, sortedBlocks);
-          y = -1;
-          continue;
-        }
-        y--;
-        
-      }
-    }
-    await sleep(50);
-  }
-
-}
-
-function mergeSort(blockList, start, end) {
-  newList = blockList.slice(start, end);
-  newList.sort((a, b) => a - b);
-  return newList;
-}
-
-async function runMergeSort() {
-
-  const blocks = document.querySelectorAll('.block');
-
-  let sortedBlocks = [];
-  for (let i = 0; i < blocks.length; i++) {
-    sortedBlocks.push(parseInt(blocks[i].style.height.replace('px', '')));
-  }
-  sortedBlocks.sort((a, b) => a - b);
-
-  blockList = [];
-
-  for (let i = 0; i < blocks.length; i++) {
-    blockList.push(parseInt(blocks[i].style.height.replace('px', '')));;
-  }
-
-  factor = 2;
-  while (factor < blocks.length) {
-    //Split list
-    for (let i = 0; i < (blockList.length-1); i+=factor) {
-      //Sort list
-      sortedList = mergeSort(blockList, i, i + factor);
-      for (let y = 0; y < sortedList.length; y++) {
-        blocks[i+y].style.height = sortedList[y] + 'px';
-        if (sortedList[y] == sortedBlocks[i+y]) {
-          blocks[i+y].classList.add('correct');
-        }
-        await sleep(10);
-      }
-    }
-    factor *= 2;
-  }
-  sortedList = mergeSort(blockList, 0, blockList.length);
-  for (let y = 0; y < sortedList.length; y++) {
-    blocks[y].style.height = sortedList[y] + 'px';
-    if (sortedList[y] == sortedBlocks[y]) {
-      blocks[y].classList.add('correct');
-    }
-    await sleep(10);
-  }
-}
 
 async function runSelectionSort() {
+  
+  let sortedIndex = 0;
+  while(!listFinished()) {
 
-  const blocks = document.querySelectorAll('.block');
+    let currentMin = null;
+    let currentMinIndex = null;
 
-  let currentMinIndex = 0;
-  let currentMin = 0;
-  let currentIndex = 0;
-
-  while (currentIndex != (blocks.length - 1)) {
-    for (let i = currentIndex; i < blocks.length; i++) {
-      value = parseInt(blocks[i].style.height.replace('px', ''));
-      if (i == 0) currentMin = value;
-
-      if (value < currentMin) {
-        currentMin = value;
+    for (let i = sortedIndex; i < valueList.length; i++) {
+      if (currentMin == null || valueList[i] < currentMin) {
+        currentMin = valueList[i];
         currentMinIndex = i;
       }
     }
-    if (currentMinIndex != currentIndex) {
-      //Swap the two
-      const ph = blocks[currentMinIndex].style.height;
-      blocks[currentMinIndex].style.height = blocks[currentIndex].style.height;
-      blocks[currentIndex].style.height = ph;
-    }
-    blocks[currentIndex].classList.add('correct');
-    currentIndex++;
-    currentMin = parseInt(blocks[currentIndex].style.height.replace('px', ''));
-    await sleep(70);
-    currentMinIndex = currentIndex;
+    swapArrayValues(sortedIndex, currentMinIndex);
+    await sleep(20);
+    renderValueList();
+    sortedIndex += 1;
+    currentMin = null;
+    currentMinIndex = null;
   }
-  blocks[blocks.length - 1].classList.add('correct');
+
 }
+
+async function runInsertionSort() {
+
+  while(!listFinished()) {
+
+    for (let i = 1; i < valueList.length; i++) {
+      let index = i + 0;
+      while(valueList[index] < valueList[index-1] && index > 0) {
+        swapArrayValues(index, index-1);
+        index--;
+        renderValueList();
+        await sleep(20);
+      }
+      renderValueList();
+      await sleep(20);
+    }
+
+  }
+
+
+}
+
+async function runBubbleSort() {
+  let sortedIndex = valueList.length;
+  while (!listFinished()) {
+    for (let i = 1; i < sortedIndex; i++) {
+      if (valueList[i] < valueList[i - 1]) {
+        swapArrayValues(i, i-1);
+      }
+      renderValueList();
+      await sleep(50);
+    }
+    sortedIndex--;
+  }
+}
+
+refreshBars();
 

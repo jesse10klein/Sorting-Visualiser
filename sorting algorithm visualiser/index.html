@@ -9,16 +9,16 @@
 
   <body>
   
-  <input id='slider' type="range" min="1" max="7" value="4">
+  <input id='numBars' type="range" min="1" max="10" value="5">
 
-  <button onclick="generateBlocks()">Refresh</button>
+  <button onclick="refreshBars()">Refresh</button>
   <button onclick="runBubbleSort()">Bubble Sort</button>
-  <button onclick="runQuickSort()">Quick Sort</button>
+  <button onclick="runQuicksort()">Quick Sort</button>
   <button onclick="runInsertionSort()">Insertion Sort</button>
   <button onclick="runMergeSort()">Merge Sort</button>
   <button onclick="runSelectionSort()">Selection Sort</button>
 
-  <div id='container'> </div>
+  <canvas id='canvas' width='800px' height='500x'></canvas>
 
 
     <script src='script.js'></script>

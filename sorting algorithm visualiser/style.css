@@ -1,21 +1,5 @@
 
 
-#container {
-  margin-top: 20px;
-  width: 800px;
-  height: 400px;
-  background-color: blue;
-  margin: auto;
-  display: flex;
-  flex-direction: row;
-}
-
-.block {
-  background-color: red;
-  margin-left: 1px;
-  margin-right: 1px;
-}
-
-.correct {
-  background-color: greenyellow;
+#canvas {
+  background-color: black;
 }
