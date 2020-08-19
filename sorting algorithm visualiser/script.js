@@ -3,20 +3,36 @@
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
 const numBars = document.getElementById('numBars');
+const speed = document.getElementById('speed');
+const speedValues = [3000, 2000, 1000, 700, 500, 300, 100, 50, 25, 10];
 
 let valueList = null;
 let correct = null;
 
+let algorithmInProgress = false;
+let needToStop = false;
+
 //To aid with the visualization
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+function sleep() {
+  return new Promise(resolve => setTimeout(resolve, speedValues[speed.value]));
 }
 
-numBars.onchange = (e) => {
+//Wait for other algorithm to stop
+function wait() {
+  return new Promise(resolve => setTimeout(resolve, speedValues[speed.value]));
+}
+
+numBars.onchange = async (e) => {
+  needToStop = true;
+  setTimeout(() => {needToStop = false; algorithmInProgress = false}, 100);
+  await wait();
   refreshBars();
 }
 
-function refreshBars() {
+async function refreshBars() {
+  needToStop = true;
+  setTimeout(() => {needToStop = false; algorithmInProgress = false}, 100);
+  await wait();
   valueList = generateList(numBars.value * 10);
   const copy = [...valueList];
   correct = copy.sort((a, b) => a - b);
@@ -104,16 +120,21 @@ function getPivotIndex(start, end) {
 }
 
 async function runQuicksort() {
-  console.log("Running quicksort");
+  if (algorithmInProgress) {
+    alert("An algorithm is already in progress. Press refresh button or change size to cancel");
+    return;
+  } else {
+    algorithmInProgress = true;
+  }
   await runQuicksortIteration(0, valueList.length - 1);
-  console.log("Done");
 }
 
 async function runQuicksortIteration(start, end) {
 
-  console.log("Quicksort iteration", start, end);
 
-  await sleep(50);
+  if (needToStop) return;
+
+  await sleep();
 
   //Base case, swap then done
   if ((end - start <= 1)) {
@@ -134,7 +155,9 @@ async function runQuicksortIteration(start, end) {
   //Swap items so that lower than valueList[pivotIndex] is on left, higher on right
   while (true) {
     
-    await sleep(50);
+    if (needToStop) return;
+
+    await sleep();
     let fromLeft = null;
     let fromRight = null;
     let leftIndex = null;
@@ -156,10 +179,10 @@ async function runQuicksortIteration(start, end) {
       swapArrayValues(leftIndex, end);
       renderValueList();
       if (start < (leftIndex - 1)) {
-        runQuicksortIteration(start, leftIndex - 1);
+        await runQuicksortIteration(start, leftIndex - 1);
       }
       if ((leftIndex + 1) < end) {
-        runQuicksortIteration(leftIndex + 1, end);
+        await runQuicksortIteration(leftIndex + 1, end);
       }
       return;
     } else {
@@ -171,8 +194,6 @@ async function runQuicksortIteration(start, end) {
 }
 
 
-
-
 function mergeSort(start, end) {
   newList = valueList.slice(start, end);
   newList.sort((a, b) => a - b);
@@ -181,8 +202,18 @@ function mergeSort(start, end) {
 
 async function runMergeSort() {
 
+  if (algorithmInProgress) {
+    alert("An algorithm is already in progress. Press refresh button or change size to cancel");
+    return;
+  } else {
+    algorithmInProgress = true;
+  }
+
   let factor = 2;
   while (factor < valueList.length) {
+
+    if (needToStop) return;
+
     //Split list
     for (let i = 0; i < (valueList.length-1); i+=factor) {
       //Sort list
@@ -190,7 +221,7 @@ async function runMergeSort() {
       for (let y = 0; y < sortedList.length; y++) {
         valueList[i+y] = sortedList[y];
         renderValueList();
-        await sleep(50);
+        await sleep();
       }
     }
     factor *= 2;
@@ -198,29 +229,46 @@ async function runMergeSort() {
 
   sortedList = mergeSort(0, valueList[valueList.length - 1]);
   for (let y = 0; y < sortedList.length; y++) {
+
+    if (needToStop) return;
+
     valueList[y] = sortedList[y];
     renderValueList();
-    await sleep(50);
+    await sleep();
   }
 }
 
 
 async function runSelectionSort() {
   
+  if (algorithmInProgress) {
+    alert("An algorithm is already in progress. Press refresh button or change size to cancel");
+    return;
+  } else {
+    algorithmInProgress = true;
+  }
+
   let sortedIndex = 0;
   while(!listFinished()) {
+
+    
+    if (needToStop) return;
 
     let currentMin = null;
     let currentMinIndex = null;
 
     for (let i = sortedIndex; i < valueList.length; i++) {
+
+      
+      if (needToStop) return;
+
       if (currentMin == null || valueList[i] < currentMin) {
         currentMin = valueList[i];
         currentMinIndex = i;
       }
     }
     swapArrayValues(sortedIndex, currentMinIndex);
-    await sleep(20);
+    await sleep();
     renderValueList();
     sortedIndex += 1;
     currentMin = null;
@@ -231,18 +279,31 @@ async function runSelectionSort() {
 
 async function runInsertionSort() {
 
+  if (algorithmInProgress) {
+    alert("An algorithm is already in progress. Press refresh button or change size to cancel");
+    return;
+  } else {
+    algorithmInProgress = true;
+  }
+
   while(!listFinished()) {
 
+    
+    if (needToStop) return;
+
     for (let i = 1; i < valueList.length; i++) {
+      
+      if (needToStop) return;
+
       let index = i + 0;
       while(valueList[index] < valueList[index-1] && index > 0) {
         swapArrayValues(index, index-1);
         index--;
         renderValueList();
-        await sleep(20);
+        await sleep();
       }
       renderValueList();
-      await sleep(20);
+      await sleep();
     }
 
   }
@@ -251,14 +312,25 @@ async function runInsertionSort() {
 }
 
 async function runBubbleSort() {
+
+  if (algorithmInProgress) {
+    alert("An algorithm is already in progress. Press refresh button or change size to cancel");
+    return;
+  } else {
+    algorithmInProgress = true;
+  }
+
   let sortedIndex = valueList.length;
   while (!listFinished()) {
+    if (needToStop) return;
     for (let i = 1; i < sortedIndex; i++) {
+      
+      if (needToStop) return;
       if (valueList[i] < valueList[i - 1]) {
         swapArrayValues(i, i-1);
       }
       renderValueList();
-      await sleep(50);
+      await sleep();
     }
     sortedIndex--;
   }
