@@ -12,6 +12,15 @@ let correct = null;
 let algorithmInProgress = false;
 let needToStop = false;
 
+window.onload = () => {
+  canvas.width = window.innerWidth - 100;
+}
+
+window.onresize = () => {
+  canvas.width = window.innerWidth - 100;
+  renderValueList();
+}
+
 //To aid with the visualization
 function sleep() {
   return new Promise(resolve => setTimeout(resolve, speedValues[speed.value]));
@@ -131,22 +140,21 @@ async function runQuicksort() {
 
 async function runQuicksortIteration(start, end) {
 
-
   if (needToStop) return;
 
   await sleep();
 
   //Base case, swap then done
-  if ((end - start <= 1)) {
+  if ((end - start) <= 1) {
     if (valueList[end] < valueList[start]) {
       swapArrayValues(end, start);
+      renderValueList();
     }
     return;
   }
 
   //Otherwise need to get a valueList[pivotIndex] and partition
   let pivotIndex = getPivotIndex(start, end);
-  console.log(pivotIndex);
   //Move valueList[pivotIndex] to the back
   swapArrayValues(pivotIndex, end);
   renderValueList();

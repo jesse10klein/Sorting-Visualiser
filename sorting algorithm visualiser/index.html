@@ -9,19 +9,26 @@
 
   <body>
   
-    
-  <label>Size</label>
-  <input id='numBars' type="range" min="1" max="10" value="5">
-  <label>Speed</label>
-  <input id='speed' type="range" min="1" max="10" value="5">
+  <div id='menuBar'>
 
+    <div id='row1'>
+      <label>Size</label>
+      <input id='numBars' type="range" min="1" max="10" value="5">
+      <label>Speed</label>
+      <input id='speed' type="range" min="1" max="10" value="5">
+      <button onclick="refreshBars()">Refresh</button>
+    </div>
 
-  <button onclick="refreshBars()">Refresh</button>
-  <button onclick="runBubbleSort()">Bubble Sort</button>
-  <button onclick="runQuicksort()">Quick Sort</button>
-  <button onclick="runInsertionSort()">Insertion Sort</button>
-  <button onclick="runMergeSort()">Merge Sort</button>
-  <button onclick="runSelectionSort()">Selection Sort</button>
+    <div id='row2'>
+      <button onclick="runBubbleSort()">Bubble Sort</button>
+      <button onclick="runQuicksort()">Quick Sort</button>
+      <button onclick="runInsertionSort()">Insertion Sort</button>
+      <button onclick="runMergeSort()">Merge Sort</button>
+      <button onclick="runSelectionSort()">Selection Sort</button>
+    </div>
+
+  </div>
+
 
   <canvas id='canvas' width='800px' height='500x'></canvas>
 

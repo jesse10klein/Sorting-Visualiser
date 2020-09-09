@@ -1,5 +1,18 @@
 
 
 #canvas {
+  margin-left: 50px;
   background-color: black;
+}
+
+#menuBar {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+@media only screen and (max-width: 1000px) {
+  #menuBar {
+    flex-direction: column;
+  }
 }
