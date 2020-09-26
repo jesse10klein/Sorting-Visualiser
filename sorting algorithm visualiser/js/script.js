@@ -6,11 +6,10 @@ const numBars = document.getElementById('numBars');
 const speed = document.getElementById('speed');
 const speedValues = [3000, 2000, 1000, 700, 500, 300, 100, 50, 25, 10];
 
+const buttons = document.querySelectorAll(".algorithm")
+
 let valueList = null;
 let correct = null;
-
-let algorithmInProgress = false;
-let needToStop = false;
 
 window.onload = () => {
   canvas.width = window.innerWidth - 100;
@@ -19,6 +18,29 @@ window.onload = () => {
 window.onresize = () => {
   canvas.width = window.innerWidth - 100;
   renderValueList();
+}
+
+function listComplete() {
+  for (let i = 0; i < valueList.length; i++) {
+    if (valueList[i] != correct[i]) return false;
+  }
+  return true;
+}
+
+function disableButtons() {
+  for (let i = 0; i < buttons.length; i++) {
+    buttons[i].disabled = true;
+  }
+  numBars.disabled = true;
+  speed.disabled = true;
+}
+
+function enableButtons() {
+  for (let i = 0; i < buttons.length; i++) {
+    buttons[i].disabled = false;
+  }
+  numBars.disabled = false;
+  speed.disabled = false;
 }
 
 //To aid with the visualization
@@ -32,15 +54,10 @@ function wait() {
 }
 
 numBars.onchange = async (e) => {
-  needToStop = true;
-  setTimeout(() => {needToStop = false; algorithmInProgress = false}, 100);
-  await wait();
   refreshBars();
 }
 
 async function refreshBars() {
-  needToStop = true;
-  setTimeout(() => {needToStop = false; algorithmInProgress = false}, 100);
   await wait();
   valueList = generateList(numBars.value * 10);
   const copy = [...valueList];
@@ -81,9 +98,9 @@ function renderValueList() {
 
   for (let i = 0; i < valueList.length; i++) {
     if (valueList[i] === correct[i]) {
-      renderBar('green', i, barWidth, valueList[i]);
+      renderBar('rgb(0, 100, 0)', i, barWidth, valueList[i]);
     } else {
-      renderBar('red', i, barWidth, valueList[i]);
+      renderBar('#CD0000', i, barWidth, valueList[i]);
     }
   }
 
@@ -129,18 +146,16 @@ function getPivotIndex(start, end) {
 }
 
 async function runQuicksort() {
-  if (algorithmInProgress) {
-    alert("An algorithm is already in progress. Press refresh button or change size to cancel");
+  if (listComplete()) {
+    console.log("Algorithm finished, please refresh")
     return;
-  } else {
-    algorithmInProgress = true;
   }
+  disableButtons();
   await runQuicksortIteration(0, valueList.length - 1);
+  enableButtons();
 }
 
 async function runQuicksortIteration(start, end) {
-
-  if (needToStop) return;
 
   await sleep();
 
@@ -162,8 +177,6 @@ async function runQuicksortIteration(start, end) {
 
   //Swap items so that lower than valueList[pivotIndex] is on left, higher on right
   while (true) {
-    
-    if (needToStop) return;
 
     await sleep();
     let fromLeft = null;
@@ -209,18 +222,13 @@ function mergeSort(start, end) {
 }
 
 async function runMergeSort() {
-
-  if (algorithmInProgress) {
-    alert("An algorithm is already in progress. Press refresh button or change size to cancel");
+  if (listComplete()) {
+    console.log("Algorithm finished, please refresh")
     return;
-  } else {
-    algorithmInProgress = true;
   }
-
+  disableButtons();
   let factor = 2;
   while (factor < valueList.length) {
-
-    if (needToStop) return;
 
     //Split list
     for (let i = 0; i < (valueList.length-1); i+=factor) {
@@ -238,37 +246,28 @@ async function runMergeSort() {
   sortedList = mergeSort(0, valueList[valueList.length - 1]);
   for (let y = 0; y < sortedList.length; y++) {
 
-    if (needToStop) return;
-
     valueList[y] = sortedList[y];
     renderValueList();
     await sleep();
   }
+  enableButtons();
 }
 
 
 async function runSelectionSort() {
-  
-  if (algorithmInProgress) {
-    alert("An algorithm is already in progress. Press refresh button or change size to cancel");
+  if (listComplete()) {
+    console.log("Algorithm finished, please refresh")
     return;
-  } else {
-    algorithmInProgress = true;
   }
-
+  disableButtons()
   let sortedIndex = 0;
   while(!listFinished()) {
 
-    
-    if (needToStop) return;
 
     let currentMin = null;
     let currentMinIndex = null;
 
     for (let i = sortedIndex; i < valueList.length; i++) {
-
-      
-      if (needToStop) return;
 
       if (currentMin == null || valueList[i] < currentMin) {
         currentMin = valueList[i];
@@ -282,26 +281,19 @@ async function runSelectionSort() {
     currentMin = null;
     currentMinIndex = null;
   }
-
+  enableButtons();
 }
 
 async function runInsertionSort() {
-
-  if (algorithmInProgress) {
-    alert("An algorithm is already in progress. Press refresh button or change size to cancel");
+  if (listComplete()) {
+    console.log("Algorithm finished, please refresh")
     return;
-  } else {
-    algorithmInProgress = true;
   }
-
+  disableButtons();
   while(!listFinished()) {
 
-    
-    if (needToStop) return;
 
     for (let i = 1; i < valueList.length; i++) {
-      
-      if (needToStop) return;
 
       let index = i + 0;
       while(valueList[index] < valueList[index-1] && index > 0) {
@@ -313,27 +305,19 @@ async function runInsertionSort() {
       renderValueList();
       await sleep();
     }
-
   }
-
-
+  enableButtons();
 }
 
 async function runBubbleSort() {
-
-  if (algorithmInProgress) {
-    alert("An algorithm is already in progress. Press refresh button or change size to cancel");
+  if (listComplete()) {
+    console.log("Algorithm finished, please refresh")
     return;
-  } else {
-    algorithmInProgress = true;
   }
-
+  disableButtons();
   let sortedIndex = valueList.length;
   while (!listFinished()) {
-    if (needToStop) return;
     for (let i = 1; i < sortedIndex; i++) {
-      
-      if (needToStop) return;
       if (valueList[i] < valueList[i - 1]) {
         swapArrayValues(i, i-1);
       }
@@ -342,6 +326,7 @@ async function runBubbleSort() {
     }
     sortedIndex--;
   }
+  enableButtons();
 }
 
 refreshBars();

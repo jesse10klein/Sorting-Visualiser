@@ -1,0 +1,102 @@
+
+body {
+  background-color: #CCEAEB;
+  font-family: 'Arvo', serif;
+}
+
+#content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 100vw;
+  background-image: linear-gradient(15deg, #13547a 0%, #80d0c7 100%);
+}
+
+input {
+  font-family: 'Arvo', serif;
+}
+
+#canvas {
+  margin-left: 50px;
+  background-color: transparent;
+}
+
+#menuBar {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+#footer {
+  position: fixed;
+  bottom: 0px;
+  display: flex;
+  flex-direction: row;
+}
+
+#icons {
+  display: flex;
+  flex-direction: row;
+}
+
+.icon {
+  margin: 0px 10px;
+  display: flex;
+  flex-direction: row;
+}
+
+a {
+  text-decoration: none;
+  color: black;
+}
+
+.icon img {
+  height: 50px;
+  width: 50px;
+  object-fit: contain;
+  margin: 5px;
+  margin-right: 10px;
+}
+
+button {
+  width: 100px;
+  height: 30px;
+  font-family: 'Arvo', serif;
+  border: none;
+  padding: 0px;
+  margin: 0px;
+  background-color: transparent;
+  color: white;
+  border: 1px solid white;
+  border-radius: 5px;
+}
+
+button:disabled, button[disabled] {
+  background-color: gray;
+  color: black;
+  border: 1px solid black;
+}
+
+label {
+  font-size: 15px;
+}
+
+@media only screen and (max-width: 1000px) {
+  #menuBar {
+    flex-direction: column;
+  }
+
+  .icon img {
+    height: 30px;
+    width: 30px;
+  }
+
+  .icon h3 {
+    font-size: 12px;
+  }
+
+  #footer h3 {
+    font-size: 12px;
+  }
+}

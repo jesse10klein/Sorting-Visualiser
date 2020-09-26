@@ -3,36 +3,59 @@
   <head>
     <meta charset="UTF-8">
     <title>Sorting Algorithm Visualiser</title>
-    <link rel='stylesheet' href='style.css'>
+    <link rel='stylesheet' href='style/style.css'>
+    <link rel='stylesheet' href='style/inputstyle.css'>
+    <link href="https://fonts.googleapis.com/css2?family=Arvo&display=swap" rel="stylesheet">
   </head>
 
 
   <body>
+    <div id='content'>
+
+      <div id='menuBar'>
+
+
+        <h1 id="heading">Sorting Algorithm Visualiser</h1>
+    
+        <div id='row1'>
+          <label>Size: </label>
+          <input id='numBars' type="range" min="1" max="10" value="5">
+          <label>Speed: </label>
+          <input id='speed' type="range" min="1" max="10" value="5">
+          <button onclick="refreshBars()">Refresh</button>
+        </div>
+    
+    
+        <div id='row2'>
+          <button class="algorithm" onclick="runBubbleSort()">Bubble Sort</button>
+          <button class="algorithm" onclick="runQuicksort()">Quick Sort</button>
+          <button class="algorithm" onclick="runInsertionSort()">Insertion Sort</button>
+          <button class="algorithm" onclick="runMergeSort()">Merge Sort</button>
+          <button class="algorithm" onclick="runSelectionSort()">Selection Sort</button>
+        </div>
+    
+      </div>
+    
+      <canvas id='canvas' width='800px' height='500x'></canvas>
+      
+      <footer id='footer'>
+        <h3> Made by Jesse Klein </h3>
+        <div id='icons'>
+          <a class='icon' href='https://github.com/jesse10klein' target="_blank">
+            <img src='images/github-icon.png'>
+            <h3>jesse10klein</h3>
+          </a>
+          <div class='icon'>
+            <img src='images/gmail.png'>
+            <h3>jesse10klein@gmail.com</h3>
+          </div>
+        </div>
+      </footer>
+
+
+    </div>
   
-  <div id='menuBar'>
 
-    <div id='row1'>
-      <label>Size</label>
-      <input id='numBars' type="range" min="1" max="10" value="5">
-      <label>Speed</label>
-      <input id='speed' type="range" min="1" max="10" value="5">
-      <button onclick="refreshBars()">Refresh</button>
-    </div>
-
-    <div id='row2'>
-      <button onclick="runBubbleSort()">Bubble Sort</button>
-      <button onclick="runQuicksort()">Quick Sort</button>
-      <button onclick="runInsertionSort()">Insertion Sort</button>
-      <button onclick="runMergeSort()">Merge Sort</button>
-      <button onclick="runSelectionSort()">Selection Sort</button>
-    </div>
-
-  </div>
-
-
-  <canvas id='canvas' width='800px' height='500x'></canvas>
-
-
-    <script src='script.js'></script>
+    <script src='js/script.js'></script>
   </body>
 </html>
