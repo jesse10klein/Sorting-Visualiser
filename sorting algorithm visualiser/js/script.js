@@ -12,7 +12,9 @@ let valueList = null;
 let correct = null;
 
 window.onload = () => {
-  canvas.width = window.innerWidth - 100;
+  console.log(window.innerWidth);
+  canvas.width = document.documentElement.clientWidth - 100;
+  canvas.height = document.documentElement.clientHeight/2;
 }
 
 function refresh() {
