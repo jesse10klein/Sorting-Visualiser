@@ -19,7 +19,7 @@ input {
 
 #canvas {
   margin-left: 50px;
-  background-color: transparent;
+  
 }
 
 #menuBar {
@@ -72,6 +72,10 @@ button {
   border-radius: 5px;
 }
 
+button:hover {
+  border: 2px solid white;
+}
+
 button:disabled, button[disabled] {
   background-color: gray;
   color: black;
@@ -79,12 +83,23 @@ button:disabled, button[disabled] {
 }
 
 label {
-  font-size: 15px;
+  font-size: 25px;
+  margin-right: 10px;
+  margin-left: 10px;
 }
 
-@media only screen and (max-width: 1000px) {
+#refresh {
+  margin-left: 10px;
+  margin-top: -5px;
+}
+
+#heading {
+  text-align: center;
+}
+@media only screen and (max-width: 1300px) {
   #menuBar {
     flex-direction: column;
+    text-align: center;
   }
 
   .icon img {
@@ -98,5 +113,24 @@ label {
 
   #footer h3 {
     font-size: 12px;
+  }
+
+  #canvas {
+    margin-top: 150px;
+  }
+  #row2 {
+    margin-top: 40px;
+  }
+
+  #row2 button {
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+}
+
+
+@media only screen and (max-width: 900px) {
+  input[type=range] {
+    width: 100px !important;
   }
 }

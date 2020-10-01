@@ -15,6 +15,10 @@ window.onload = () => {
   canvas.width = window.innerWidth - 100;
 }
 
+function refresh() {
+  location.reload();
+}
+
 window.onresize = () => {
   canvas.width = window.innerWidth - 100;
   renderValueList();
