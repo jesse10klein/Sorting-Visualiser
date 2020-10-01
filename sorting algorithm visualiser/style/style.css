@@ -17,11 +17,6 @@ input {
   font-family: 'Arvo', serif;
 }
 
-#canvas {
-  margin-left: 50px;
-  
-}
-
 #menuBar {
   display: flex;
   flex-direction: row;
@@ -159,7 +154,6 @@ label {
 
   #canvas {
     margin: 0px;
-    margin-left: 50px;
     margin-top: 30px;
   }
 

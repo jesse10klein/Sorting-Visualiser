@@ -13,7 +13,13 @@ let correct = null;
 
 window.onload = () => {
   console.log(window.innerWidth);
-  canvas.width = document.documentElement.clientWidth - 100;
+  if (document.documentElement.clientWidth < 700) {
+    canvas.width = document.documentElement.clientWidth - 20;
+    canvas.style.marginLeft = '10px';
+  } else {
+    canvas.width = document.documentElement.clientWidth - 100;
+    canvas.style.marginLeft = '50px';
+  }
   canvas.height = document.documentElement.clientHeight/2;
 }
 
